@@ -23,7 +23,11 @@
 .traffic-story strong{display:block;margin-bottom:5px;color:#173b42}
 .traffic-story .emphasis{color:#096e64;font-weight:700}
 .traffic-output{border-left:3px solid var(--teal);padding-left:10px;margin-top:13px!important;color:#173b42!important;font-weight:650}
-@media(max-width:700px){.traffic-panel{margin:0 16px 16px;padding:15px}.traffic-story{grid-template-columns:1fr}}
+.traffic-event{display:none;margin-top:12px;padding:13px 15px;border:1px solid #e9c29b;border-left:5px solid #c16b29;border-radius:9px;background:#fff5e9;color:#5d351d;font-size:13px;line-height:1.55}
+.traffic-event.visible{display:block}.traffic-event strong{display:block;margin-bottom:4px}.traffic-event .traffic-minutes{font-size:17px;font-weight:800;color:#9c451a}
+.traffic-map-alert{position:absolute;right:12px;top:12px;z-index:4;display:none;background:#fff7e9;border:1px solid #dba976;border-left:4px solid #bd5b24;color:#653b23;padding:10px 13px;border-radius:8px;max-width:225px;font-size:12px;line-height:1.45;box-shadow:0 4px 12px #102b3024;pointer-events:none}
+.traffic-map-alert.visible{display:block}.traffic-map-alert strong{display:block;font-size:13px}.traffic-story>div.story-active{border-color:#95b7a9;background:#f4fbf7}
+@media(max-width:700px){.traffic-panel{margin:0 16px 16px;padding:15px}.traffic-story{grid-template-columns:1fr}.traffic-map-alert{right:8px;top:56px;max-width:170px;padding:7px 9px}}
 </style></head><body><main>
 <div class="top"><div class="brand">CRITERIVA</div><div class="badge">Alejandro Rodríguez · Propuesta conceptual</div></div>
 <h1>El recorrido importa.<br><span>El horario de entrega también.</span></h1>
@@ -50,14 +54,15 @@
     <button id="traffic-during" type="button" aria-pressed="false">② Durante el reparto</button>
   </div>
   <div class="traffic-story">
-    <div><strong>Antes de salir</strong>Se estima el tiempo de cada tramo según el horario probable de paso. Puede convenir visitar primero una zona más lejana antes de que aumente el tránsito.</div>
-    <div><strong>Durante el reparto</strong>Si cambia el tráfico, se mantienen las entregas ya hechas y se revisa el orden de las pendientes, respetando las ventanas de recepción.</div>
+    <div id="traffic-step-before"><strong>09:00 · Antes de salir</strong>Se planifican las tres entregas con ventanas horarias y tiempos de traslado previstos. Camioneta 1: <b>B → A → C</b>.</div>
+    <div id="traffic-step-during"><strong>10:00 · Durante el reparto</strong>La entrega B ya está hecha. Aparece una congestión ilustrativa cerca de A: se comparan los dos pedidos pendientes y se propone <b>C → A</b>.</div>
   </div>
+  <div id="traffic-event" class="traffic-event" role="status" aria-live="polite"><strong>⚠️ 10:00 · Simulación de cambio de tránsito en la zona de A</strong>Tiempo estimado para un tramo afectado: <b>antes 12 min</b> → <b>ahora 32 min</b>. <span class="traffic-minutes">+20 min</span><br>Cliente B: entregado ✓ · Clientes A y C: pendientes. Se revisa el orden de las próximas visitas, sin cambiar entregas ya realizadas.</div>
   <p id="traffic-output" class="traffic-output" role="status">Probá los dos botones: el mapa mostrará un ejemplo ilustrativo de cómo podría cambiar la secuencia.</p>
   <p><small><strong>Importante:</strong> horarios, zonas y congestión son ejemplos ficticios. No hay consulta de tráfico en vivo, predicción validada ni optimización calculada.</small></p>
 </div>
 <div class="compare-bar" role="group" aria-label="Comparar orden de entregas"><button data-scenario="current" aria-pressed="false">Recorrido actual</button><button data-scenario="proposed" aria-pressed="true">Recorrido propuesto</button><button id="reorganize" disabled aria-describedby="how-to-try fleet-help">▶ Animar reorganización</button><div id="how-to-try" class="how-to-try"><strong>Cómo probarlo:</strong><ol><li>Seleccioná una camioneta (1, 2 o 3).</li><li>Tocá «Animar reorganización».</li><li>Observá cómo cambia el orden de las entregas y el recorrido propuesto.</li></ol><p id="fleet-help" class="fleet-help">Estás en «Las tres». Elegí una camioneta para habilitar «Animar reorganización».</p></div><span id="compare-status" role="status">Seleccioná una camioneta para comparar su orden de entregas.</span></div><p class="compare-caption"><b>Comparación ilustrativa.</b> El «recorrido actual» es un ejemplo ficticio para explicar el problema, no un registro de Alejandro. Se mantienen los pedidos y su camioneta; cambia el orden para considerar los horarios de recepción.</p><div id="comparison" class="comparison" hidden></div>
-<div class="map-layout"><div class="map-stage"><div id="route-map" aria-label="Cartografía interactiva de Buenos Aires"></div><svg id="route-overlay" role="group" aria-label="Tres recorridos ilustrativos con paradas numeradas"></svg><div class="map-note" id="map-note" role="status">Cargando cartografía…</div></div><aside class="map-details" id="map-details" aria-live="polite"></aside></div>
+<div class="map-layout"><div class="map-stage"><div id="route-map" aria-label="Cartografía interactiva de Buenos Aires"></div><div id="traffic-map-alert" class="traffic-map-alert" aria-live="polite"><strong>⚠ Cambio de tránsito · 10:00</strong>Zona de A: tramo estimado 12 → 32 min (+20 min).<br>Reorganización ilustrativa de pendientes.</div><svg id="route-overlay" role="group" aria-label="Tres recorridos ilustrativos con paradas numeradas"></svg><div class="map-note" id="map-note" role="status">Cargando cartografía…</div></div><aside class="map-details" id="map-details" aria-live="polite"></aside></div>
 <div class="map-foot"><p><b>Clientes, ubicaciones y horarios ficticios.</b> Trazos conceptuales: no son rutas optimizadas ni indicaciones de manejo. Sin seguimiento en vivo.</p><button id="replay-routes" type="button">↻ Repetir recorrido</button></div>
 </section>
 <section class="result"><div class="result-head"><h2>Así se podría ver el resultado</h2><span>EJEMPLO ILUSTRATIVO<br>3 PARADAS POR VEHÍCULO</span></div>
@@ -83,7 +88,7 @@ let trafficMode=null;
 let map=null,selected='all',progress=1,frame=0,opened=false,ready=false,timeout=null,scenario='proposed',reorderTimer=null;
 const currentOrders=[[1,0,2],[1,0,2],[0,2,1]],currentTimes=[['09:10','10:15','10:35'],['09:00','09:45','10:20'],['09:15','09:40','09:55']];
 function routeStops(i,mode=scenario){
- if(mode==='proposed')return fleets[i].stops;
+ if(mode==='proposed') {if(trafficMode&&i===0)return fleets[i].stops.map((st,j)=>{const a=[...st];a[1]=['09:10','10:20','11:00'][j];return a});return fleets[i].stops;}
  if(mode==='dynamic'&&i===0){
   // La primera entrega ya se hizo; reordenamos únicamente las dos pendientes.
   const order=[0,2,1],times=['09:10','10:35','11:10'];
@@ -93,7 +98,7 @@ function routeStops(i,mode=scenario){
 }
 function timing(s){if(s[2]==='Sin ventana indicada')return '';const [a,b]=s[2].split('–');const early=s[1]<a,late=s[1]>b;return `<span class="timing ${early||late?'warn':'ok'}">${early?'Antes de apertura':late?'Fuera de ventana':'Dentro de ventana'}</span>`}
 function cancelReorder(){clearTimeout(reorderTimer);reorderTimer=null;cancelAnimationFrame(frame);progress=1;}
-function comparisons(){document.querySelectorAll('[data-scenario]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scenario===scenario)));const box=document.getElementById('comparison');box.hidden=selected==='all';document.getElementById('reorganize').disabled=selected==='all';if(selected==='all')return;const i=Number(selected);const modes=trafficMode?['proposed','dynamic']:['current','proposed'];box.innerHTML=modes.map(mode=>`<div class="compare-card ${mode===scenario?'active':''}"><h3>${trafficMode?(mode==='proposed'?'Plan antes de salir':'Reordenado durante el reparto'):(mode==='current'?'Recorrido actual':'Recorrido propuesto')} · ${fleets[i].name}</h3>${routeStops(i,mode).map((s,j)=>`<div class="compare-row"><div><b>${j+1}. Cliente ${s[0]} · ${s[1]}</b><small>Ventana: ${s[2]}</small></div>${timing(s)}</div>`).join('')}</div>`).join('');}
+function comparisons(){document.querySelectorAll('[data-scenario]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scenario===scenario)));const box=document.getElementById('comparison');box.hidden=selected==='all';document.getElementById('reorganize').disabled=selected==='all';if(selected==='all')return;const i=Number(selected);const modes=trafficMode?['proposed','dynamic']:['current','proposed'];box.innerHTML=modes.map(mode=>`<div class="compare-card ${mode===scenario?'active':''}"><h3>${trafficMode?(mode==='proposed'?'Plan antes de salir':'Reordenado durante el reparto'):(mode==='current'?'Recorrido actual':'Recorrido propuesto')} · ${fleets[i].name}</h3>${routeStops(i,mode).map((s,j)=>`<div class="compare-row"><div><b>${j+1}. Cliente ${s[0]} · ${s[1]}${trafficMode&&s[0]==='B'?' ✓':''}</b><small>${trafficMode&&s[0]==='B'?'Entregado · ':''}Ventana: ${s[2]}</small></div>${timing(s)}</div>`).join('')}</div>`).join('');}
 const ns='http://www.w3.org/2000/svg';
 function tag(n,a={},text){const e=document.createElementNS(ns,n);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));if(text!==undefined)e.textContent=text;return e;}
 function project(c){if(map&&ready){const p=map.project(c);return [p.x,p.y]}const w=stage.clientWidth,h=stage.clientHeight;return [36+(c[0]+58.49)/.125*(w-72),50+(-34.55-c[1])/.105*(h-90)];}
@@ -112,18 +117,35 @@ function reveal(){section.hidden=false;document.getElementById('view-routes').se
 function trafficSelect(mode){
  cancelReorder();trafficMode=mode;
  document.querySelectorAll('.traffic-actions button').forEach(b=>b.setAttribute('aria-pressed',String(b.id===(mode==='before'?'traffic-before':'traffic-during'))));
- scenario=mode==='before'?'proposed':'dynamic';
- const output=document.getElementById('traffic-output');
- output.textContent=mode==='before'
-   ?'① Plan previo: B (09:10) → A (09:50) → C (10:35). Considerar la congestión prevista permite decidir qué zona visitar primero.'
-   :'② Tránsito cambia cerca de las 10:00 en la zona de A: B ya fue entregado. Las pendientes se reorganizan: C (10:35) → A (11:10). Ejemplo, no cálculo real.';
- progress=0; select('0'); animate();
- document.getElementById('compare-status').textContent=mode==='before'?'Ejemplo de recorrido planificado antes de salir.':'Ejemplo de replanificación de pedidos pendientes durante el reparto.';
+ document.getElementById('traffic-step-before').classList.toggle('story-active',mode==='before');
+ document.getElementById('traffic-step-during').classList.toggle('story-active',mode==='during');
+ const event=document.getElementById('traffic-event'),mapAlert=document.getElementById('traffic-map-alert'),output=document.getElementById('traffic-output');
+ event.classList.remove('visible');mapAlert.classList.remove('visible');
+ if(mode==='before'){
+   scenario='proposed';
+   output.textContent='① 09:00 · Plan inicial: B (09:10) → A (10:20) → C (11:00). Horarios y orden de ejemplo, contemplando tráfico previsto.';
+   progress=0;select('0');animate();
+   document.getElementById('compare-status').textContent='Primer momento: recorridos planificados antes de salir.';
+ }else{
+   // Misma camioneta, mismo punto de partida. Primero se ve el plan original;
+   // luego ocurre una congestión SIMULADA, y recién después se redibuja la propuesta.
+   scenario='proposed';
+   output.textContent='② 10:00 · B ya fue entregado. El plan original sigue mostrando A → C; ahora simulamos un aumento del tránsito cerca de A…';
+   progress=1;select('0');
+   event.classList.add('visible');mapAlert.classList.add('visible');draw();
+   document.getElementById('compare-status').textContent='Cambio simulado: +20 min en un tramo hacia A. Evaluando el orden de A y C…';
+   reorderTimer=setTimeout(()=>{
+     scenario='dynamic';progress=0;select('0');animate();
+     output.textContent='② Tras la congestión simulada: B ✓ entregado; nuevo orden de las pendientes C (10:35) → A (11:10). Cambian la secuencia y los horarios de ejemplo.';
+     document.getElementById('compare-status').textContent='Replanificación ilustrativa: B ✓ entregado; se reordenan solo C y A. No se calculó tráfico real.';
+     reorderTimer=null;
+   },1700);
+ }
  stage.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
 }
 document.getElementById('traffic-before').addEventListener('click',()=>trafficSelect('before'));
 document.getElementById('traffic-during').addEventListener('click',()=>trafficSelect('during'));
-function clearTraffic(){trafficMode=null;document.querySelectorAll('.traffic-actions button').forEach(b=>b.setAttribute('aria-pressed','false'));}
+function clearTraffic(){trafficMode=null;document.getElementById('traffic-event').classList.remove('visible');document.getElementById('traffic-map-alert').classList.remove('visible');document.querySelectorAll('.traffic-story>div').forEach(x=>x.classList.remove('story-active'));document.querySelectorAll('.traffic-actions button').forEach(b=>b.setAttribute('aria-pressed','false'));}
 document.getElementById('view-routes').addEventListener('click',reveal);document.getElementById('replay-routes').addEventListener('click',()=>{cancelReorder();animate()});document.querySelectorAll('[data-fleet]').forEach(b=>b.addEventListener('click',()=>{cancelReorder();clearTraffic();scenario=b.dataset.fleet==='all'?'proposed':'current';select(b.dataset.fleet);document.getElementById('compare-status').textContent=selected==='all'?'Seleccioná una camioneta para comparar su orden de entregas.':'Ejemplo actual: revisá la entrega marcada y pulsá Animar reorganización.';}));
 document.querySelectorAll('[data-scenario]').forEach(b=>b.addEventListener('click',()=>{cancelReorder();clearTraffic();scenario=b.dataset.scenario;select(selected);document.getElementById('compare-status').textContent=(scenario==='current'?'Recorrido actual':'Recorrido propuesto')+' · orden y horarios ficticios para comparar.';}));
 document.getElementById('reorganize').addEventListener('click',()=>{if(selected==='all')return;stage.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});cancelReorder();clearTraffic();scenario='current';select(selected);document.getElementById('compare-status').textContent='Mismos pedidos y camioneta: reorganizamos el orden para considerar la ventana horaria…';reorderTimer=setTimeout(()=>{scenario='proposed';animate();document.getElementById('compare-status').textContent='Ejemplo propuesto: la entrega marcada queda dentro de su ventana. No es una optimización calculada.';},900);});new ResizeObserver(()=>{if(map){map.resize();fit()}draw()}).observe(stage);window.showConceptRoutes=reveal;
